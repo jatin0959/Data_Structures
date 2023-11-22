@@ -1,0 +1,698 @@
+BASIC TERMINOLOGIES IN GRAPH:-
+
+Vertex (Node): A fundamental unit in a graph. It represents an entity or a point in the graph.
+
+Edge: A connection or a link between two vertices. It represents a relationship or a connection between the entities represented by the vertices.
+
+Directed Graph (Digraph): A graph in which edges have a direction, meaning they go from one vertex (called the source) to another vertex (called the target).
+
+Undirected Graph: A graph in which edges have no direction, meaning they simply connect two vertices without a specific starting or ending point.
+
+Weighted Graph: A graph in which each edge is assigned a numerical value or weight. This weight can represent a variety of things, such as distance, cost, or some other relevant metric.
+
+Unweighted Graph: A graph in which all edges have the same weight (or no weight at all).
+
+Degree of a Vertex: For a vertex v in an undirected graph, the degree of v is the number of edges incident to it. In a directed graph, we have both in-degree (number of edges coming into the vertex) and out-degree (number of edges leaving the vertex).
+
+Adjacent Vertices: Two vertices are adjacent if there is an edge connecting them.
+
+Path: A sequence of vertices where each adjacent pair is connected by an edge.
+
+Cycle: A path that starts and ends at the same vertex, without visiting any other vertex more than once.
+
+Connected Graph: A graph in which there is a path between every pair of vertices.
+
+Disconnected Graph: A graph that is not connected. It consists of two or more connected components.
+
+Subgraph: A graph formed from a subset of vertices and edges of the original graph.
+
+Complete Graph: A graph in which every pair of distinct vertices is connected by an edge.
+
+Clique: A subset of vertices in an undirected graph such that every pair of distinct vertices in the clique are adjacent.
+
+Tree: A connected acyclic graph. A tree with n vertices will have exactly n-1 edges.
+
+Forest: A disjoint set of trees.
+
+Spanning Tree: A subgraph of a graph that is a tree and connects all the vertices.
+
+Directed Acyclic Graph (DAG): A directed graph with no directed cycles.
+
+Bipartite Graph: A graph whose vertices can be divided into two disjoint sets such that no two vertices within the same set are adjacent.
+
+
+
+ADJENCY OF MATRIX:-
+
+An adjacency matrix is a way to represent a graph using a 2-dimensional array. It's a square matrix where the number of rows and columns is equal to the number of vertices in the graph.
+
+Here's an example:
+
+Consider a simple graph with 4 vertices (0, 1, 2, and 3) and the following edges:
+
+Edge from 0 to 1
+Edge from 0 to 2
+Edge from 1 to 3
+Edge from 2 to 3
+
+The adjacency matrix for this graph would look like this:
+  0 1 2 3
+0 0 1 1 0
+1 1 0 0 1
+2 1 0 0 1
+3 0 1 1 0
+
+In this matrix:
+
+adjMatrix[0][1] is 1, representing an edge from vertex 0 to vertex 1.
+adjMatrix[0][2] is 1, representing an edge from vertex 0 to vertex 2.
+adjMatrix[1][3] is 1, representing an edge from vertex 1 to vertex 3.
+adjMatrix[2][3] is 1, representing an edge from vertex 2 to vertex 3.
+
+Note: adjency of matrix only represent the relation between vertex it does not represent the vertex data. to display vertex data also we have to create an another function where we will take data as input frrom user.
+
+C code for adjMatrix:-
+
+#include <stdio.h>
+
+#define MAX_SIZE 100
+
+int adjMatrix[MAX_SIZE][MAX_SIZE]; // Global adjacency matrix
+char* nodeData[MAX_SIZE]; // Global array to store node data
+
+//initialising the adjmatrix with 0
+void initializeGraph(int v) {
+    // Initialize the adjacency matrix with zeros
+    for(int i = 0; i < v; i++) {
+        for(int j = 0; j < v; j++) {
+            adjMatrix[i][j] = 0;
+        }
+    }
+}
+
+// adding relations between edges/nodes.
+// algo:- when adjMatrix[i][j] is related then adjMatrix[i][j] = 1 and default it will be 0 because we intialise it with 0.
+void addEdge(int source, int destination) {
+    // Mark the edge in the adjacency matrix
+    adjMatrix[source][destination] = 1;
+    adjMatrix[destination][source] = 1; // For undirected graph
+}
+
+// taking node data.
+
+void setNodeData(int index, char* data) {
+    nodeData[index] = data;
+}
+
+void printAdjacencyMatrix(int v) {
+    for(int i = 0; i < v; i++) {
+        for(int j = 0; j < v; j++) {
+            printf("%d ", adjMatrix[i][j]);
+        }
+        printf(" : %s\n", nodeData[i]);
+    }
+}
+
+int main() {
+    int V;
+    printf("Enter number of vertices in the graph: ");
+    scanf("%d", &V);
+    int source, dest;
+    char data[100];
+    int index;
+
+    initializeGraph(V); 
+
+    for (int i = 0; i < V; i++) {
+        printf("Enter index and data with space: ");
+        scanf("%d %s", &index, data);
+        setNodeData(index, data);
+    }
+
+    for (int i = 0; i < V; i++) {
+        printf("Enter source and destination with space: ");
+        scanf("%d %d", &source, &dest);
+        addEdge(source, dest);  
+    }
+    
+    printf("Adjacency Matrix:\n");
+    printAdjacencyMatrix(V);
+
+    return 0;
+}
+
+ADJENCY LIST:
+
+An adjacency list is another way to represent a graph. Unlike an adjacency matrix, which uses a 2-dimensional array, an adjacency list uses an array of lists.
+
+Each element in the array corresponds to a vertex in the graph. The list at each element contains all the vertices that are adjacent to the corresponding vertex.
+
+Here's a C program that implements an adjacency list representation of an undirected graph:
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent a node in the adjacency list
+struct Node {
+    int dest;
+    struct Node* next;
+};
+
+// Structure to represent the adjacency list
+struct AdjList {
+    struct Node* head;
+};
+
+// Structure to represent the graph
+struct Graph {
+    int V;
+    struct AdjList* array;
+};
+
+// Function to create a new node
+struct Node* createNode(int dest) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->dest = dest;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to create a graph with V vertices
+struct Graph* createGraph(int V) {
+    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+    graph->V = V;
+
+    // Allocate memory for an array of adjacency lists
+    graph->array = (struct AdjList*)malloc(V * sizeof(struct AdjList));
+
+    // Initialize each adjacency list as empty
+    for (int i = 0; i < V; ++i)
+        graph->array[i].head = NULL;
+
+    return graph;
+}
+
+// Function to add an edge to the graph
+void addEdge(struct Graph* graph, int src, int dest) {
+    // Add an edge from src to dest
+    struct Node* newNode = createNode(dest);
+    newNode->next = graph->array[src].head;
+    graph->array[src].head = newNode;
+
+    // Add an edge from dest to src (for undirected graph)
+    newNode = createNode(src);
+    newNode->next = graph->array[dest].head;
+    graph->array[dest].head = newNode;
+}
+
+// Function to print the adjacency list representation of the graph
+void printGraph(struct Graph* graph) {
+    for (int v = 0; v < graph->V; ++v) {
+        struct Node* temp = graph->array[v].head;
+        printf("Adjacency list of vertex %d\n", v);
+        while (temp) {
+            printf("%d -> ", temp->dest);
+            temp = temp->next;
+        }
+        printf("NULL\n");
+    }
+}
+
+int main() {
+    int V = 5; // Number of vertices
+    struct Graph* graph = createGraph(V);
+
+    // Adding edges to the graph
+    addEdge(graph, 0, 1);
+    addEdge(graph, 0, 2);
+    addEdge(graph, 1, 3);
+    addEdge(graph, 2, 4);
+
+    // Print the adjacency list representation of the graph
+    printGraph(graph);
+
+    return 0;
+}
+
+Depth First Search (DFS):
+DFS is an algorithm for traversing or searching tree or graph data structures. It starts at the root node and explores as far as possible along each branch before backtracking.
+
+program in C:
+
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_SIZE 100
+
+int adjMatrix[MAX_SIZE][MAX_SIZE]; // Global adjacency matrix
+bool visited[MAX_SIZE]; // Global array to keep track of visited nodes
+int V;
+
+void dfs(int vertex) {
+    visited[vertex] = true;
+    printf("%d ", vertex);
+
+    for (int i = 0; i < V; i++) {
+        if (adjMatrix[vertex][i] && !visited[i]) {
+            dfs(i);
+        }
+    }
+}
+
+int main() {
+    printf("Enter number of vertices in the graph: ");
+    scanf("%d", &V);
+
+    // Input adjacency matrix
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &adjMatrix[i][j]);
+        }
+    }
+
+    // Initialize visited array
+    for (int i = 0; i < V; i++) {
+        visited[i] = false;
+    }
+
+    // Perform DFS starting from each unvisited vertex
+    for (int i = 0; i < V; i++) {
+        if (!visited[i]) {
+            dfs(i);
+        }
+    }
+
+    return 0;
+}
+
+Breadth First Search (BFS):
+BFS is another algorithm for traversing or searching tree or graph data structures. It explores all the vertices of a graph or all the nodes of a tree in breadthward motion.
+
+program in C:
+
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+int adjMatrix[MAX_SIZE][MAX_SIZE]; // Global adjacency matrix
+bool visited[MAX_SIZE]; // Global array to keep track of visited nodes
+int V;
+
+struct Queue {
+    int* items;
+    int front;
+    int rear;
+    int size;
+};
+
+struct Queue* createQueue(int size) {
+    struct Queue* queue = (struct Queue*)malloc(sizeof(struct Queue));
+    queue->items = (int*)malloc(size * sizeof(int));
+    queue->front = -1;
+    queue->rear = -1;
+    queue->size = size;
+    return queue;
+}
+
+bool isEmpty(struct Queue* queue) {
+    return queue->front == -1;
+}
+
+void enqueue(struct Queue* queue, int value) {
+    if (queue->rear == queue->size - 1)
+        printf("\nQueue is full");
+    else {
+        if (queue->front == -1)
+            queue->front = 0;
+        queue->rear++;
+        queue->items[queue->rear] = value;
+    }
+}
+
+int dequeue(struct Queue* queue) {
+    int item;
+    if (isEmpty(queue)) {
+        printf("Queue is empty");
+        item = -1;
+    } else {
+        item = queue->items[queue->front];
+        queue->front++;
+        if (queue->front > queue->rear) {
+            queue->front = queue->rear = -1;
+        }
+    }
+    return item;
+}
+
+void bfs(int startVertex) {
+    struct Queue* queue = createQueue(V);
+
+    visited[startVertex] = true;
+    printf("%d ", startVertex);
+    enqueue(queue, startVertex);
+
+    while (!isEmpty(queue)) {
+        int currentVertex = dequeue(queue);
+
+        for (int i = 0; i < V; i++) {
+            if (adjMatrix[currentVertex][i] && !visited[i]) {
+                visited[i] = true;
+                printf("%d ", i);
+                enqueue(queue, i);
+            }
+        }
+    }
+
+    free(queue->items);
+    free(queue);
+}
+
+int main() {
+    printf("Enter number of vertices in the graph: ");
+    scanf("%d", &V);
+
+    // Input adjacency matrix
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &adjMatrix[i][j]);
+        }
+    }
+
+    // Initialize visited array
+    for (int i = 0; i < V; i++) {
+        visited[i] = false;
+    }
+
+    // Perform BFS starting from vertex 0
+    printf("BFS starting from vertex 0: ");
+    bfs(0);
+
+    return 0;
+}
+
+/* till this comments are not turning off all algorithms are important you can skip the code but learn algorithms.
+Connected Component:
+A connected component of an undirected graph is a subgraph in which there is a path between every pair of vertices.
+
+Algorithm for Connected Componets in a graph
+
+step 1: Input:
+		Number of vertices V.
+		Adjacency matrix of the graph.
+
+step 2: Initialization:
+		Initialize an array visited to keep track of visited nodes.
+		Initialize componentCount to 0.
+
+step 3: DFS for Each Unvisited Vertex:
+		For each vertex in the graph:
+			If the vertex is not visited:
+			Increment componentCount.
+			Print the current component number.
+			Perform DFS from the current vertex.
+step 4: DFS:
+		Mark the current vertex as visited.
+		Print the vertex.
+		For each adjacent vertex that is not visited, recursively call DFS on that vertex.
+
+Program for Connected Components in a Graph:
+
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+int adjMatrix[MAX_SIZE][MAX_SIZE]; // Global adjacency matrix
+bool visited[MAX_SIZE]; // Global array to keep track of visited nodes
+int V;
+
+void dfs(int vertex) {
+    visited[vertex] = true;
+
+    for (int i = 0; i < V; i++) {
+        if (adjMatrix[vertex][i] && !visited[i]) {
+            dfs(i);
+        }
+    }
+}
+
+void findConnectedComponents() {
+    int componentCount = 0;
+
+    for (int i = 0; i < V; i++) {
+        if (!visited[i]) {
+            componentCount++;
+            printf("Connected Component %d: ", componentCount);
+            dfs(i);
+            printf("\n");
+        }
+    }
+}
+
+int main() {
+    printf("Enter number of vertices in the graph: ");
+    scanf("%d", &V);
+
+    // Input adjacency matrix
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &adjMatrix[i][j]);
+        }
+    }
+
+    // Initialize visited array
+    for (int i = 0; i < V; i++) {
+        visited[i] = false;
+    }
+
+    // Find and print connected components
+    findConnectedComponents();
+
+    return 0;
+}
+
+
+Spanning Trees:
+A spanning tree of an undirected graph is a subgraph that is a tree which includes all the vertices of the original graph.
+
+Spanning Trees:
+A spanning tree of an undirected graph is a subgraph that is a tree which includes all the vertices of the original graph.
+
+Minimum Cost Spanning Trees:
+Minimum Cost Spanning Trees are spanning trees with the smallest total edge weights.
+
+Prim's Algorithm:
+Prim's algorithm is a greedy algorithm that finds a minimum spanning tree for a weighted undirected graph.
+
+Kruskal's Algorithm:
+Kruskal's algorithm is another greedy algorithm for finding a minimum spanning tree.
+
+Algorithm for Minimum Spanning Tree using Prism'm Algorithm:
+
+step 1: Input:
+	Weighted graph represented by an adjacency matrix.
+Step 2: Initialization:
+	Initialize arrays parent, key, and mstSet.
+	Set key[i] to a large value and mstSet[i] to false for all vertices.
+	Set key[0] to 0.
+step 3: Main Loop:
+
+	For each vertex:
+		Find the vertex u with the minimum key value that is not yet included in MST.
+		Mark u as included in MST.
+	For each vertex v adjacent to u:
+		If v is not in MST, and the weight of the edge u-v is less than key[v]:
+		Update key[v] with the weight of u-v.
+		Set parent[v] to u.
+step 4: Print MST:
+Print the edges and their weights from parent[].
+
+Program for Minimum Spanning Tree using Prim's Algorithm:
+
+#include <stdio.h>
+#include <limits.h>
+
+#define V 5 // Number of vertices
+
+int minKey(int key[], bool mstSet[]) {
+    int min = INT_MAX, min_index;
+
+    for (int v = 0; v < V; v++) {
+        if (!mstSet[v] && key[v] < min) {
+            min = key[v];
+            min_index = v;
+        }
+    }
+
+    return min_index;
+}
+
+void printMST(int parent[], int graph[V][V]) {
+    printf("Edge \tWeight\n");
+    for (int i = 1; i < V; i++)
+        printf("%d - %d \t%d \n", parent[i], i, graph[i][parent[i]]);
+}
+
+void primMST(int graph[V][V]) {
+    int parent[V];
+    int key[V];
+    bool mstSet[V];
+
+    for (int i = 0; i < V; i++) {
+        key[i] = INT_MAX;
+        mstSet[i] = false;
+    }
+
+    key[0] = 0;
+    parent[0] = -1;
+
+    for (int count = 0; count < V - 1; count++) {
+        int u = minKey(key, mstSet);
+        mstSet[u] = true;
+
+        for (int v = 0; v < V; v++) {
+            if (graph[u][v] && !mstSet[v] && graph[u][v] < key[v]) {
+                parent[v] = u;
+                key[v] = graph[u][v];
+            }
+        }
+    }
+
+    printMST(parent, graph);
+}
+
+int main() {
+    int graph[V][V] = {{0, 2, 0, 6, 0},
+                       {2, 0, 3, 8, 5},
+                       {0, 3, 0, 0, 7},
+                       {6, 8, 0, 0, 9},
+                       {0, 5, 7, 9, 0}};
+
+    primMST(graph);
+
+    return 0;
+}
+
+Algorithm  for Minimum Spanning Tree using Kruskal's Algorithm:
+
+Step 1: Input:
+	Weighted graph represented by an array of edges.
+step 2: Initialization:
+	Sort the edges in ascending order based on their weights.
+step 3:Union-Find Data Structure:
+	Create a Union-Find data structure to keep track of connected components.
+step 4: Main Loop:
+
+	For each edge in sorted order:
+		If adding the edge to the MST doesn't create a cycle, include it in MST.
+		Otherwise, discard the edge.
+step 5: Print MST:
+	Print the edges and their weights that form the MST.
+
+Program for Minimum Spanning Tree using Kruskal's Algorithm:
+#include <stdio.h>
+#include <stdlib.h>
+
+#define V 5 // Number of vertices
+#define E 7 // Number of edges
+
+struct Edge {
+    int src, dest, weight;
+};
+
+struct Graph {
+    int V, E;
+    struct Edge* edge;
+};
+
+struct Graph* createGraph() {
+    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+    graph->V = V;
+    graph->E = E;
+    graph->edge = (struct Edge*)malloc(E * sizeof(struct Edge));
+    return graph;
+}
+
+struct Subset {
+    int parent;
+    int rank;
+};
+
+int find(struct Subset subsets[], int i) {
+    if (subsets[i].parent != i)
+        subsets[i].parent = find(subsets, subsets[i].parent);
+
+    return subsets[i].parent;
+}
+
+void Union(struct Subset subsets[], int x, int y) {
+    int xroot = find(subsets, x);
+    int yroot = find(subsets, y);
+
+    if (subsets[xroot].rank < subsets[yroot].rank)
+        subsets[xroot].parent = yroot;
+    else if (subsets[xroot].rank > subsets[yroot].rank)
+        subsets[yroot].parent = xroot;
+    else {
+        subsets[yroot].parent = xroot;
+        subsets[xroot].rank++;
+    }
+}
+
+void kruskalMST(struct Graph* graph) {
+    int V = graph->V;
+    struct Edge result[V];
+    int e = 0;
+    int i = 0;
+
+    qsort(graph->edge, graph->E, sizeof(graph->edge[0]), [](const void* a, const void* b) {
+        struct Edge* aEdge = (struct Edge*)a;
+        struct Edge* bEdge = (struct Edge*)b;
+        return aEdge->weight > bEdge->weight;
+    });
+
+    struct Subset* subsets = (struct Subset*)malloc(V * sizeof(struct Subset));
+
+    for (int v = 0; v < V; v++) {
+        subsets[v].parent = v;
+        subsets[v].rank = 0;
+    }
+
+    while (e < V - 1 && i < graph->E) {
+        struct Edge next_edge = graph->edge[i++];
+
+        int x = find(subsets, next_edge.src);
+        int y = find(subsets, next_edge.dest);
+
+        if (x != y) {
+            result[e++] = next_edge;
+            Union(subsets, x, y);
+        }
+    }
+
+    printf("Edge \tWeight\n");
+    for (i = 0; i < e; i++)
+        printf("%d - %d \t%d \n", result[i].src, result[i].dest, result[i].weight);
+
+    free(subsets);
+}
+
+int main() {
+    struct Graph* graph = createGraph();
+    graph->edge[0].src = 0;
+    graph->edge[0].dest = 1;
+    graph->edge[0].weight = 10;
+
+    graph->edge[1].src = 0;
+    graph->edge[1].dest = 2;
+    graph->edge[1].weight = 6;
+
+    graph->edge[2].
+	return 0:
+	}
+*/

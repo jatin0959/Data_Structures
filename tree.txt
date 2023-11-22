@@ -1,0 +1,612 @@
+           Binary Tree
+
+
+Tree:-
+
+A tree is a widely used data structure in computer science that models hierarchical relationships between elements. It consists of nodes connected by edges. A tree has the following characteristics:
+
+Root: A distinguished node called the root, which is the starting point of the tree.
+
+Nodes: Each element in a tree is called a node. Nodes are connected by edges.
+
+Edges: The connections between nodes.
+
+Parent and Child: A node in a tree can have zero or more child nodes, except for the root, which has no parent. A node directly connected to another node is called its child, and the node it is connected to is called its parent.
+
+Leaf: A node with no children is called a leaf.
+
+Subtree: A tree formed by a node and its descendants.
+
+Height: The length of the longest path from a node to a leaf. The height of the tree is the height of the root.
+
+Depth: The length of the path from the root to a node.
+
+Siblings: Nodes that share the same parent.
+
+Ancestor and Descendant: A node is an ancestor of all the nodes in its subtree. Conversely, nodes in a subtree are descendants of the root of that subtree.
+
+Binary Tree:
+
+A binary tree is a special type of tree in which each node can have at most two children, referred to as the left child and the right child. These children are distinguished by their position relative to the parent.
+
+In a binary tree, each node can have zero, one, or two children. This means that at most, every node can have two subtrees. The children of a node in a binary tree are often referred to as the "left child" and "right child".
+
+example of a binary tree:
+
+                     A
+                    / \
+                    B   C
+                   / \
+                   D   E
+
+
+complete binary tree:
+
+A complete binary tree is a special type of binary tree in which every level, except possibly the last, is completely filled, and all nodes are as left as possible.
+
+In a complete binary tree:
+
+1.All levels, except possibly the last, are fully filled.
+2.If the last level is not fully filled, it is filled from left to right.
+3.In the last level, nodes are positioned as left as possible.
+
+Properties of Complete Binary Trees:
+1.The maximum number of nodes at level i is 2^i.
+2.The number of nodes in a complete binary tree with height h is between 2^h and 2^(h+1) - 1.
+example:
+        1
+      /   \
+     2     3
+    / \   / \
+   4   5 6   7
+the tree is complete because:
+1.All levels except the last are filled.
+2.The last level is filled from left to right.
+
+
+Binary Tree Representation:
+There are two common ways to represent binary trees:
+
+Array Representation:
+In this representation, you use an array to store the elements of the binary tree.
+The root is stored at index 0.
+For a node at index i, its left child is at index 2*i + 1 and its right child is at index 2*i + 2.
+example:-
+          A
+        /   \
+       B     C
+      / \   / \
+     D   E F   G
+
+Array Representation:
+["A", "B", "C", "D", "E", "F", "G"]
+
+Algorithm for Array Representation:
+
+1.Define an array to store the elements of the binary tree.
+2.Initialize the array with the elements of the binary tree.
+3.To access the left child of a node at index i, use the formula: left_child = 2*i + 1.
+4.To access the right child of a node at index i, use the formula: right_child = 2*i + 2.
+5.To access the parent of a node at index i, use the formula: parent = (i - 1) / 2.
+6.Implement functions to perform operations on the binary tree, such as inserting nodes, deleting nodes, traversing the tree, etc.
+
+code:
+
+#include <stdio.h>
+
+#define MAX_SIZE 100
+
+int binaryTree[MAX_SIZE]; // Assuming MAX_SIZE is the maximum size of the array
+
+int leftChild(int i) {
+    return 2*i + 1;
+}
+
+int rightChild(int i) {
+    return 2*i + 2;
+}
+
+int parent(int i) {
+    return (i - 1) / 2;
+}
+
+void initializeBinaryTree(int elements[], int size) {
+    for (int i = 0; i < size; i++) {
+        binaryTree[i] = elements[i];
+    }
+}
+
+void inorderTraversal(int i, int size) {
+    if (i < size && binaryTree[i] != -1) {
+        inorderTraversal(leftChild(i), size);
+        printf("%d ", binaryTree[i]);
+        inorderTraversal(rightChild(i), size);
+    }
+}
+
+void preorderTraversal(int i, int size) {
+    if (i < size && binaryTree[i] != -1) {
+        printf("%d ", binaryTree[i]);
+        preorderTraversal(leftChild(i), size);
+        preorderTraversal(rightChild(i), size);
+    }
+}
+
+void postorderTraversal(int i, int size) {
+    if (i < size && binaryTree[i] != -1) {
+        postorderTraversal(leftChild(i), size);
+        postorderTraversal(rightChild(i), size);
+        printf("%d ", binaryTree[i]);
+    }
+}
+
+int main() {
+    int elements[] = {1, 2, 3, 4, 5, -1, 6}; // -1 represents empty nodes
+    int size = sizeof(elements) / sizeof(elements[0]);
+
+    initializeBinaryTree(elements, size);
+
+    printf("Inorder Traversal: ");
+    inorderTraversal(0, size);
+    printf("\n");
+
+    printf("Preorder Traversal: ");
+    preorderTraversal(0, size);
+    printf("\n");
+
+    printf("Postorder Traversal: ");
+    postorderTraversal(0, size);
+    printf("\n");
+
+    return 0;
+}
+
+
+Dynamic Representation:
+In this representation, you use dynamic memory allocation (pointers) to create nodes, and each node contains pointers to its left and right children.
+
+Algorithm:
+1.Define a structure Node with data, left child pointer, and right child pointer.
+2.Create a root node and initialize it with the first value.
+3.For each subsequent value, follow these steps:
+    Traverse the tree from the root:
+        If the value is less than the current node's value, move to the left child.
+        If the value is greater than or equal to the current node's value, move to the right child.
+    Insert the value as a new node in the appropriate position.
+4.Repeat step 3 for all values to be inserted.
+
+code:
+#include<bits/stdc++.h>
+using namespace std;
+
+struct  Node
+{
+	int data;
+	struct Node* left;
+	struct Node* right;
+	Node (int val) {
+		data = val;
+		left=NULL;
+		right = NULL;
+	}
+
+};
+
+Node* insertBST(Node* root, int val){
+	if (root == NULL){
+		return new Node(val);
+	}
+	if (val < root ->data){
+		root->left = insertBST(root->left,val);
+	}
+	else{
+		root->right = insertBST(root->right, val);
+}
+return root;
+}
+
+void inorder(Node* root){
+	if(root == NULL){
+		return;
+	}
+
+inorder(root->left);
+cout<< root->data << " ";
+inorder(root->right);
+
+}
+int main(){
+	Node *root =NULL;
+	root = insertBST(root, 5);
+	insertBST(root,1);
+	insertBST(root, 3);
+	insertBST(root,2);
+	insertBST(root,7);
+
+	//print inorder
+	inorder(root);
+	return 0;
+}
+
+traversing in BST:
+
+In Binary Search Trees (BSTs), traversal refers to the process of visiting and processing all the nodes in the tree in a specific order. There are three common types of BST traversals:
+
+Inorder Traversal:
+
+In an inorder traversal, the nodes are visited in ascending order.
+The left subtree is visited first, followed by the root, and then the right subtree.
+Algorithm:
+1.Traverse the left subtree recursively.
+2.Visit the current node.
+3.Traverse the right subtree recursively.
+
+Preorder Traversal:
+
+In a preorder traversal, the root is visited first, followed by the left subtree and then the right subtree.
+
+Algorithm:
+
+1.Visit the current node.
+2.Traverse the left subtree recursively.
+3.Traverse the right subtree recursively.
+
+Postorder Traversal:
+
+In a postorder traversal, the left subtree is visited first, followed by the right subtree, and then the root.
+
+Algorithm:
+
+1.Traverse the left subtree recursively.
+2.Traverse the right subtree recursively.
+3.Visit the current node.
+
+example:
+
+       4
+      / \
+     2   6
+    / \   \
+   1   3   7
+
+Inorder Traversal: 1 -> 2 -> 3 -> 4 -> 6 -> 7
+Preorder Traversal: 4 -> 2 -> 1 -> 3 -> 6 -> 7
+Postorder Traversal: 1 -> 3 -> 2 -> 7 -> 6 -> 4
+
+Special traversal- level order Traversal:
+
+Level order traversal is a traversal technique used for binary trees (including binary search trees) and binary tree-like structures like heaps. It visits nodes level by level, starting from the root and moving down to the deepest level. Within each level, nodes are visited from left to right.
+
+Level Order Traversal Algorithm:
+
+1.Start at the root node.
+2.Create an empty queue to hold nodes.
+3.Enqueue the root node.
+4.While the queue is not empty:
+5.Dequeue a node from the queue and process it (e.g., print its value).
+6.Enqueue its left child (if it exists).
+7.Enqueue its right child (if it exists).
+8.Continue this process until the queue is empty.
+
+example:
+       1
+      / \
+     2   3
+    / \   
+   4   5  
+
+The level order traversal of this tree would be 1 -> 2 -> 3 -> 4 -> 5.
+
+Code for preorder, postorder, inorder and level order Traversal:
+
+#include "bits/stdc++.h"
+
+using namespace std;
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+    Node(int val) {
+        data = val;
+        left = NULL;
+        right = NULL;
+    }
+};
+
+void preorderTraversal(Node* root) {
+    if (root == nullptr)
+        return;
+
+    cout << root->data << " "; 
+    preorderTraversal(root->left);  
+    preorderTraversal(root->right); 
+}
+
+
+void inorder(Node* root){
+    if (root == nullptr){
+        return;
+    }
+    inorder(root->left);
+    cout<<root->data << " ";
+    inorder(root->right);
+    
+}
+
+void postorder(Node* root){
+    if (root == nullptr){
+        return;
+    }
+    postorder(root->left);
+    postorder(root->right);
+    cout<< root->data << " ";
+
+}
+
+void levelOrder(Node* root){
+     if(root==NULL)
+     {
+        return;
+     }
+     queue<Node*> q;
+     q.push(root);
+     q.push(NULL);
+     while (!q.empty())
+     {
+        Node* node = q.front();
+        q.pop();
+        if(node !=NULL){
+            cout<< node->data << " ";
+            if(node->left){
+                q.push(node->left);
+            if(node->right){
+                q.push(node->right);
+            }
+            }
+        }
+        else if (!q.empty()){
+            q.push(NULL);
+        }
+     }
+     
+}
+
+int main() {
+    struct Node* root = new Node(1);
+    root->left = new Node(2);
+    root->right = new Node(3);
+    root->left->left = new Node(5);
+    root->right->right = new Node(6);
+
+ cout << "Preorder Traversal: ";
+    preorderTraversal(root);
+    cout<< endl;
+
+ cout<< "Inorder Traversel: ";
+    inorder(root);
+    cout<< endl;
+ cout<< "Postorder traversal: ";
+    postorder(root);
+    cout<< endl;
+ cout<< "Levelorder Traversal: ";
+    levelOrder(root);
+    cout<< endl;
+    return 0;
+}
+
+Insertion in BST:
+1.Start at the root and compare the value to be inserted with the current node.
+2.If the value is less than the current node, go to the left subtree. If it's greater, go to the right subtree.
+3.Repeat steps 1-2 until you reach a leaf node.
+4.Insert the new node as the left child if the value is less than the leaf node, or as the right child if it's greater.
+
+Deletion in BST:
+
+Deletion in a BST is a bit more complex and involves different cases:
+
+Case 1: Node to be deleted is a leaf node.
+
+Simply remove the node.
+Case 2: Node to be deleted has one child.
+
+Replace the node with its child.
+Case 3: Node to be deleted has two children.
+
+Find the node's in-order successor (the smallest node in the right subtree).
+Replace the node's value with the in-order successor's value.
+Delete the in-order successor.
+
+//  code is as above for insertBST
+// DELETE A NODE IN BST
+
+#include<bits/stdc++.h>
+using namespace std;
+
+struct Node	
+{
+	int data;
+	struct Node* left;
+	struct Node* right;
+	Node(int val){
+		data = val;
+		left = NULL;
+		right = NULL;
+	}
+};
+
+Node* insertBST(Node* root, int val){
+	if (root == NULL){
+		return new Node(val);
+	}
+	if (val < root ->data){
+		root->left = insertBST(root->left,val);
+	}
+	else{
+		root->right = insertBST(root->right, val);
+}
+return root;
+}
+
+void inorder(Node* root){
+	if(root == NULL){
+		return;
+	}
+
+inorder(root->left);
+cout<< root->data << " ";
+inorder(root->right);
+
+}
+
+Node* inorderSucc( Node* root){
+	Node* curr = root;
+	while(curr && curr->left != NULL){
+		curr = curr->left;
+	}
+	return curr;
+}
+Node* searchInBST(Node* root, int key){
+	if (root == NULL){
+		return NULL;
+	}
+	if(root->data == key){
+		return root;
+	}
+	if(root->data>key){
+		return searchInBST(root->left, key);
+	}
+	
+	return searchInBST(root->right, key);
+}
+
+Node* deleteInBST(Node* root, int key){
+	if(key < root->data){
+		root->left = deleteInBST(root->left, key);
+	}
+	else if(key > root->data){
+		root->right = deleteInBST(root->right, key);
+	}
+	else{
+		if(root->left == NULL){
+			Node* temp = root->right;
+			free(root);
+			return temp;
+		}
+		else if(root->right == NULL){
+			Node* temp = root->left;
+			free(root);
+			return temp;
+		}
+		Node* temp = inorderSucc(root->right);
+		root->data = temp->data;
+		root->right = deleteInBST(root->right, temp->data);
+	}
+	return root;
+
+}
+
+int main(){
+	Node *root =NULL;
+	root = insertBST(root, 5);
+	insertBST(root,1);
+	insertBST(root, 3);
+	insertBST(root,2);
+	insertBST(root,7);
+	cout<< "entered BST in inorder: "<< endl;
+	inorder(root);
+	cout << endl;
+	int key;
+	cout<< "enter key to search: ";
+	cin>> key;
+	if(searchInBST(root,key)){
+		cout<<"found in BST"<< endl;
+		deleteInBST(root,key);
+		cout<<"After deletion the BST is: "<< endl;
+		inorder(root);
+
+	}
+	else{
+		cout<<"No node exit with given value in BST"<< endl<< "can not delete";
+	}
+
+return 0;
+}
+
+Algebraic Expressions:
+
+An expression tree is a binary tree in which each internal node corresponds to an operator, and each leaf node corresponds to an operand.
+
+Building an Expression Tree:
+
+1.If a node is an operand (e.g., a variable or constant), it becomes a leaf node.
+2.If a node is an operator (e.g., +, -, *, /), it becomes an internal node. Its left and right children represent the operands of the operation.
+
+Example:
+Consider the algebraic expression: A + B * C - D / E
+
+         -
+       /   \
+      +     /
+     / \   / \
+    A   * D   E
+         /
+        B
+         \
+          C
+
+In this example, the operators (+, -, *, /) are internal nodes, while the operands (A, B, C, D, E) are leaf nodes.
+
+Evaluating an Expression Tree:
+To evaluate an expression tree, you perform a recursive traversal of the tree, starting from the root:
+1.If the current node is a leaf node, return its value.
+2.If the current node is an internal node, recursively evaluate the left and right subtrees and apply the corresponding operation.
+
+Example (Evaluation of Expression Tree):
+
+Using the expression tree above:
+
+1.Starting from the root -, we recursively evaluate the left and right subtrees.
+2.The left subtree + involves addition, so we recursively evaluate A + (B * C).
+3.In this subtree, we evaluate B * C to get a result of BC.
+4.Returning to the left subtree, we have A + BC.
+5.The right subtree / involves division, so we recursively evaluate D / E to get a result of DE.
+6.Finally, we perform A + BC - DE to get the final result.
+
+Benefits of Expression Trees:
+
+1.Efficient Evaluation: Once the tree is constructed, evaluating the expression becomes efficient, especially for complex expressions.
+
+2.Easy to Manipulate: Expression trees can be modified, simplified, or optimized using tree traversal algorithms.
+
+3.Useful for Compilers: Expression trees are used internally by compilers during the process of parsing and generating machine code.
+
+SEARCHING:------------
+
+
+Sequential Search:
+
+Sequential search, also known as linear search, is a basic searching algorithm that checks each element in a list or array one by one until the target element is found or the end of the list is reached.
+
+Algorithm:
+
+1.Start from the first element of the list.
+2.Compare the target element with the current element.
+3.If they match, return the index.
+4.If not, move to the next element.
+5.Repeat steps 2-4 until the end of the list is reached or the target element is found.
+
+Binary Search:
+Binary search is an efficient searching algorithm for sorted lists or arrays. It works by repeatedly dividing in half the portion of the list that could contain the target element.
+Precondition: The list must be sorted.
+
+Algorithm:
+
+1.Define pointers left and right to indicate the start and end of the list, respectively.
+2.Set left = 0 and right = n - 1, where n is the length of the list.
+3.While left <= right:
+Calculate the middle index as mid = (left + right) / 2.
+    If the middle element is equal to the target, return its index.
+    If the middle element is less than the target, update left = mid + 1.
+    If the middle element is greater than the target, update right = mid - 1.
+4.If the loop exits without finding the target, it is not present in the list.
